@@ -1,0 +1,84 @@
+
+==============================================================================
+
+Names: Wade Perry (gperry04), Tim Seifert(tseife01)
+
+We received help from course TAs and documentation websites
+
+Everything from the specification has been correctly implemented.
+
+==============================================================================
+
+Departures from Design
+    Origionally we planned on implimenting memory as a Seq_T of Seq_Ts of 32 
+    bit words however we found that by using hansons UArray to represent each
+    segment we would not have to worry about mallocing each word
+
+============================================================================== 
+
+– Succinctly describes the architecture of your system. Identify the modules 
+used, what abstractions they implement, what secrets they know, and how they 
+relate to one another. Avoid narrative descriptions of the behavior of
+particular modules.
+
+Modules Used:
+Um-instructions.h & Um-instructions.c
+Specifically the function Instructions_new(FILE *file) that returns a U_Array_T
+of all of the 32 bit word structures within the .um file. These functions hold
+the secret to getting data from the .um files. In this way we don't have to 
+worry about prcessing data in the actual implementation, and have it nicely 
+stored for further processing.
+
+um.c & um.h
+Um.h and um.c are the files where the universal machine underlying 
+implementation is held. These files hold the secret for the structure of the
+instruction, the simulation of memory, leftover storage from unmapped memory,
+as well as the possible insutrctions themselves.
+
+main.c
+main.c combines both the Um-instructions.h & Um-instructions.c and um.c & um.h
+files for the full execution of .um file in our universal machine. 
+Specifically main.c first calls the Um-instructions.h interface  to 
+get the words from the .um file. Stored in a UArray_T this can then be passed
+to the um.c file to be stored in the sequence pointer $m[0]. From here um.c 
+handles the unpacking of the word. When the words are individually unpacked, the
+opticode can be used to call the respective .um function. Register memory
+manipulation occurs in the um.c implmentation, a secret which is known only to 
+this file.
+==============================================================================
+
+It depends largely on the instructions.
+5.92 seconds for 85,070,521 instructions (how many instructions midmark.um runs)
+so ~3.47 per 50 million instructions
+
+==============================================================================
+
+halt.um - tests to see if halt causes any crashes
+        calls halt
+halt-verbose.um - tests to see if halt works correctly 
+         calls halt and then outputs BAD! if halt didnt work
+add.um - tests to see if add and load value work correctly 
+         loads values into registers adds them and outputs the result
+input-output.um - tests to see if input and output work correctly 
+         waits for input from standard in and then outputs the first char
+mult.um - tests to see if multiplication works correctly 
+        loads values into registers multiplies them and outputs the result
+divis.um - tests to see if division works correctly 
+        loads values into registers divides them and outputs the result
+bnand.um - tests to see if NAND works correctly 
+        loads values into registers and NANDs them
+condmove.um - tests to see if the condtional move works correctly 
+        loads values into registers, moves them and then outputs
+map-unmap.um - tests to see if map and unmap segment work correctly 
+        maps 2 segments unmapps one of them, mapps another and
+        checks to see if the adress was resused
+seg-load.um - tests to see if segment load works correctly 
+        maps a segment loads  value and then takes the value and outputs it
+
+==============================================================================
+
+Hours spent analyzing the assignment : 3
+Hours spent preparing your design : 5
+Hours spent solving the problems after analysis : 20
+
+==============================================================================

@@ -1,0 +1,10 @@
+halt.um
+halt-verbose.um
+add.um
+input-output.um
+mult.um
+divis.um
+bnand.um
+condmove.um
+map-unmap.um
+seg-load.um
