@@ -38,6 +38,8 @@ void Input(instruction instruct);
 void Load_Program(instruction instruct, Seq_T memory);
 void Load_Value(instruction instruct);
 
+UArray_T newInstuctions(UArray_T segment);
+
 
 /* 
 * execute()
@@ -275,16 +277,20 @@ unmappedSegs
 void Halt(Seq_T memory, Seq_T unmappedSegs)
 {
     int length = Seq_length(memory);
-    for(int i = 0; i < length; i++){
-        UArray_T segment = (UArray_T)Seq_remlo(memory);
-        if (segment != NULL) {
-            UArray_free(& segment);
-        }
+    UArray_T segment;
+    while (Seq_length(memory) > 0) {
+            segment = (UArray_T)Seq_remhi(memory);
+            if (segment != NULL) {
+                    UArray_free(&segment);
+                    segment = NULL;
+            }
     }
     length = Seq_length(unmappedSegs);
-    for(int i = 0; i < length; i++){
+    for (int i = 0; i < length; i++) {
         unsigned *index = (unsigned *)Seq_remlo(unmappedSegs);
-        free(index);
+        if (index != NULL) {
+            free(index);
+        }
     }
     Seq_free(&memory);
     Seq_free(&unmappedSegs);
@@ -395,14 +401,33 @@ void Load_Program(instruction instruct, Seq_T memory)
 {
     if ((unsigned)registers[instruct.b] != 0) {
         assert((unsigned)registers[instruct.b] < (unsigned)Seq_length(memory));
-        UArray_T newInstruct = 
-            (UArray_T)Seq_get(memory, (unsigned)registers[instruct.b]);
+        UArray_T newInstruct = newInstuctions(
+            (UArray_T)Seq_get(memory, (unsigned)registers[instruct.b]));
         UArray_T oldInstruct = (UArray_T)Seq_remlo(memory);
         UArray_free(&oldInstruct);
         Seq_addlo(memory, newInstruct);
         program_length = UArray_length(newInstruct);
     }
     program_counter = (unsigned)registers[instruct.c];
+}
+
+/*
+NewInstruction()
+Takes in: UArray_T segment
+Purpose: makes a deep copy of the new instruction
+errors: none, uarray_length stops this possiblity from occuring, checked
+runtime error if input is not a u_array.
+return: UArray_T deep copy
+*/
+UArray_T newInstuctions(UArray_T segment)
+{
+    UArray_T newInstuction = UArray_new( UArray_length(segment) , 
+    sizeof(u_int32_t));
+    for (int i = 0; i < UArray_length(segment); i++) {
+        u_int32_t word = *(u_int32_t *)UArray_at(segment, i);
+         *(u_int32_t *)UArray_at(newInstuction, i) = word;
+    }
+    return newInstuction;
 }
 /* 
 * Load_Value()

@@ -45,6 +45,20 @@ handles the unpacking of the word. When the words are individually unpacked, the
 opticode can be used to call the respective .um function. Register memory
 manipulation occurs in the um.c implmentation, a secret which is known only to 
 this file.
+
+                                Broad Overview of Modules
+START OF PROGRAM:
+main.c (initial decleartion of memory, file input)
+        |
+        |
+        V
+um.instructions.c & .h (process file input) ----> um.c & .h (get opticode, 
+other info from 32 bit word, declare registers, output to stdout, clear memory)
+
+By taking a step approach, We seperate the file pointer input(main.c), then the
+ hard 
+input (um.instructions.c), then cleaning the input(um.c), to finally working on
+ that cleaned input(um.c).
 ==============================================================================
 
 It depends largely on the instructions.

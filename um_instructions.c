@@ -23,10 +23,10 @@ UArray_T Instructions_new(FILE *file)
     rewind(file);
     int num_instructs = file_size / 4;
     /*create the UArray_T that hold instructions*/
-    UArray_T instructions = UArray_new(num_instructs, sizeof(uint32_t));
+    UArray_T instructions = UArray_new(num_instructs, sizeof(u_int32_t));
     int byte = fgetc(file);
     for(int i = 0; i < num_instructs; i++){
-        uint64_t instruction = 0;
+        u_int32_t instruction = 0;
         instruction = Bitpack_newu(instruction, 8, 24, byte);
         byte = fgetc(file);
         instruction = Bitpack_newu(instruction, 8, 16, byte);
@@ -35,7 +35,7 @@ UArray_T Instructions_new(FILE *file)
         byte = fgetc(file);
         instruction = Bitpack_newu(instruction, 8, 0, byte);
         /*add the instruction to the instructions array*/
-        *(uint32_t *)UArray_at(instructions, i) = (uint32_t)instruction;
+        *(u_int32_t *)UArray_at(instructions, i) = (u_int32_t)instruction;
         /*set up for next loop*/
         byte = fgetc(file);
     }
